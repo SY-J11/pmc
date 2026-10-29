@@ -38,8 +38,9 @@ const all=groups.flatMap(g=>g.items);
 const summaryRows=[
   [{no:1,id:'nasdaq',name:'나스닥 종합'},{no:2,id:'sp500',name:'S&P 500'},{no:3,id:'sox',name:'필라델피아 반도체'}],
   [{no:4,id:'nvda',name:'엔비디아'},{no:4,id:'mu',name:'마이크론'},{no:4,id:'avgo',name:'브로드컴'}],
-  [{no:5,id:'nvda',name:'엔비디아'},{no:5,id:'aapl',name:'애플'},{no:5,id:'googl',name:'알파벳 Class A'}],
-  [{no:5,id:'msft',name:'마이크로소프트'},{no:5,id:'amzn',name:'아마존'},{no:5,id:'tsla',name:'테슬라'},{no:5,id:'meta',name:'메타'}],
+  [{no:5,id:'nvda',name:'엔비디아'},{no:5,id:'aapl',name:'애플'}],
+  [{no:5,id:'googl',name:'알파벳 Class A'},{no:5,id:'msft',name:'마이크로소프트'}],
+  [{no:5,id:'amzn',name:'아마존'},{no:5,id:'tsla',name:'테슬라'},{no:5,id:'meta',name:'메타'}],
   [{no:6,id:'us2y',name:'미국 2년물'},{no:7,id:'us10y',name:'미국 10년물'},{no:8,id:'us30y',name:'미국 30년물'}],
   [{no:9,id:'dxy',name:'달러인덱스'},{no:10,id:'usdkRW',name:'원/달러'}],
   [{no:11,id:'wti',name:'WTI 유가'},{no:12,id:'brent',name:'브렌트유'},{no:13,id:'vix',name:'VIX'}],
