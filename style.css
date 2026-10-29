@@ -57,3 +57,17 @@
   .summary-cell:has(.summary-chart-link){padding-bottom:31px}
   .summary-cell .summary-titleline .summary-chart-link{right:5px;bottom:6px}
 }
+
+
+/* Explicitly anchor the two night-futures chart buttons to the cell's bottom-right. */
+.summary-cell.night-futures-summary-cell{position:relative!important;padding-bottom:38px!important}
+.summary-cell.night-futures-summary-cell .summary-titleline .summary-chart-link{
+  position:absolute!important;top:auto!important;right:9px!important;bottom:8px!important;
+  margin:0!important;transform:none!important;z-index:2
+}
+@media(max-width:520px){
+  .summary-cell.night-futures-summary-cell{padding-bottom:35px!important}
+  .summary-cell.night-futures-summary-cell .summary-titleline .summary-chart-link{
+    right:5px!important;bottom:6px!important
+  }
+}
