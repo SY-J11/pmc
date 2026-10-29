@@ -25,3 +25,6 @@
 /* KRED night futures iframe; cache-busted build */
 .kred-frame{display:block;width:100%;height:420px;min-height:360px;border:0;border-radius:8px;background:#fff}
 @media(max-width:600px){.kred-frame{height:430px;min-height:400px}}
+
+/* 야간선물 카드는 일봉 기간 탭을 초기 렌더링부터 숨김 */
+.chart-range-toolbar[data-range-for="kospi200night"],.chart-range-toolbar[data-range-for="kosdaq150night"]{display:flex!important}.chart-range-toolbar[data-range-for="kospi200night"] button,.chart-range-toolbar[data-range-for="kosdaq150night"] button{min-width:42px}
