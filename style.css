@@ -49,3 +49,11 @@
   .summary-price{font-size:12px}
   .summary-change{font-size:10.8px}
 }
+
+/* Move only the two night-futures summary chart buttons to the bottom-right. */
+.summary-cell:has(.summary-chart-link){position:relative;padding-bottom:34px}
+.summary-cell .summary-titleline .summary-chart-link{position:absolute;right:9px;bottom:8px}
+@media(max-width:520px){
+  .summary-cell:has(.summary-chart-link){padding-bottom:31px}
+  .summary-cell .summary-titleline .summary-chart-link{right:5px;bottom:6px}
+}
