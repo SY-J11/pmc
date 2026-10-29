@@ -71,3 +71,10 @@
     right:5px!important;bottom:6px!important
   }
 }
+
+/* Keep night-futures chart links inline beside the index value, not on a separate lower line. */
+.summary-cell.night-futures-summary-cell{padding-bottom:8px!important}
+.summary-cell.night-futures-summary-cell .summary-price-line{display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0}
+.summary-cell.night-futures-summary-cell .summary-price-line .summary-price{min-width:0}
+.summary-cell.night-futures-summary-cell .summary-price-line .summary-chart-link{position:static!important;inset:auto!important;transform:none!important;margin:0!important;flex:0 0 auto;padding:3px 7px;font-size:11px;line-height:1.1}
+@media(max-width:520px){.summary-cell.night-futures-summary-cell{padding-bottom:7px!important}.summary-cell.night-futures-summary-cell .summary-price-line .summary-chart-link{padding:3px 6px;font-size:10px}}
