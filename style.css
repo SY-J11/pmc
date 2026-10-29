@@ -21,3 +21,7 @@
 /* KRED live night-futures page embed */
 .kred-frame{display:block;width:100%;height:650px;min-height:650px;border:0;border-radius:8px;background:#fff}
 @media(max-width:600px){.kred-frame{height:610px;min-height:610px}}
+
+/* KRED night futures iframe; cache-busted build */
+.kred-frame{display:block;width:100%;height:420px;min-height:360px;border:0;border-radius:8px;background:#fff}
+@media(max-width:600px){.kred-frame{height:430px;min-height:400px}}
