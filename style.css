@@ -37,3 +37,15 @@
 .summary-price{font-size:18px;font-weight:800}
 .summary-change{font-size:15px;font-weight:650}
 @media(max-width:520px){.summary-titleline{gap:3px;margin-bottom:5px}.summary-titleline .summary-label{font-size:15px;letter-spacing:-.35px}.summary-chart-link{padding:4px 7px;font-size:11px}.summary-price{font-size:15px}.summary-change{font-size:13.5px}}
+
+/* Summary typography reduced to 75% of the previous enlarged size. */
+.summary-titleline .summary-label{font-size:12px}
+.summary-chart-link{font-size:9px}
+.summary-price{font-size:13.5px}
+.summary-change{font-size:11.25px}
+@media(max-width:520px){
+  .summary-titleline .summary-label{font-size:11.25px}
+  .summary-chart-link{font-size:8.25px}
+  .summary-price{font-size:11.25px}
+  .summary-change{font-size:10.125px}
+}
