@@ -1,0 +1,62 @@
+'use strict';
+// Yahoo Finance chart API is accessed through the companion Cloudflare Worker.
+const PROXY_BASE='https://stock-insight-proxy.mcraft-tiger-574.workers.dev';
+const $=id=>document.getElementById(id);
+const blank='—';
+const groups=[
+  {label:'미국 증시',items:[
+    {id:'nasdaq',no:1,name:'나스닥 종합',ticker:'^IXIC',unit:'index',percentChart:true},
+    {id:'sp500',no:2,name:'S&P 500',ticker:'^GSPC',unit:'index',percentChart:true},
+    {id:'sox',no:3,name:'필라델피아 반도체지수',ticker:'^SOX',unit:'index',percentChart:true},
+    {id:'nvda',no:4,name:'엔비디아',ticker:'NVDA',unit:'stock'},
+    {id:'mu',no:4,name:'마이크론',ticker:'MU',unit:'stock'},
+    {id:'avgo',no:4,name:'브로드컴',ticker:'AVGO',unit:'stock'},
+    {id:'nvda-m7',no:5,name:'엔비디아',ticker:'NVDA',unit:'stock',percentChart:true},
+    {id:'aapl',no:5,name:'애플',ticker:'AAPL',unit:'stock',percentChart:true},
+    {id:'googl',no:5,name:'알파벳 Class A',ticker:'GOOGL',unit:'stock',percentChart:true},
+    {id:'msft',no:5,name:'마이크로소프트',ticker:'MSFT',unit:'stock',percentChart:true},
+    {id:'amzn',no:5,name:'아마존',ticker:'AMZN',unit:'stock',percentChart:true},
+    {id:'tsla',no:5,name:'테슬라',ticker:'TSLA',unit:'stock',percentChart:true},
+    {id:'meta',no:5,name:'메타',ticker:'META',unit:'stock',percentChart:true}
+  ]},
+  {label:'금리·환율·원자재',items:[
+    {id:'us10y',no:6,name:'미국 10년물 국채금리',ticker:'^TNX',unit:'yield',suffix:'%',decimals:3},
+    {id:'us2y',no:7,name:'미국 2년물 국채금리',ticker:'^UST2Y',unit:'yield',suffix:'%',decimals:3},
+    {id:'dxy',no:8,name:'달러인덱스',ticker:'DX-Y.NYB',unit:'index'},
+    {id:'usdkRW',no:9,name:'원/달러 환율',ticker:'KRW=X',unit:'fx',suffix:'원',decimals:2},
+    {id:'wti',no:10,name:'WTI 유가',ticker:'CL=F',unit:'commodity',suffix:'$',decimals:2},
+    {id:'vix',no:11,name:'VIX',ticker:'^VIX',unit:'index',decimals:2}
+  ]},
+  {label:'국내 증시',items:[
+    {id:'kospi200night',no:12,name:'코스피200 야간선물',ticker:'KS200=F',unit:'futures',decimals:2},
+    {id:'kosdaq150night',no:13,name:'코스닥150 야간선물',ticker:'KQ150=F',unit:'futures',decimals:2}
+  ]}
+];
+const all=groups.flatMap(g=>g.items);
+const summaryRows=[
+  [{no:1,id:'nasdaq',name:'나스닥 종합'},{no:2,id:'sp500',name:'S&P 500'},{no:3,id:'sox',name:'필라델피아 반도체'}],
+  [{no:4,id:'nvda',name:'엔비디아'},{no:4,id:'mu',name:'마이크론'},{no:4,id:'avgo',name:'브로드컴'}],
+  [{no:5,id:'nvda',name:'엔비디아'},{no:5,id:'aapl',name:'애플'},{no:5,id:'googl',name:'알파벳 Class A'}],
+  [{no:5,id:'msft',name:'마이크로소프트'},{no:5,id:'amzn',name:'아마존'},{no:5,id:'tsla',name:'테슬라'},{no:5,id:'meta',name:'메타'}],
+  [{no:6,id:'us10y',name:'미국 10년물'},{no:7,id:'us2y',name:'미국 2년물'}],
+  [{no:8,id:'dxy',name:'달러인덱스'},{no:9,id:'usdkRW',name:'원/달러'}],
+  [{no:10,id:'wti',name:'WTI 유가'},{no:11,id:'vix',name:'VIX'}],
+  [{no:12,id:'kospi200night',name:'코스피200 야간선물'},{no:13,id:'kosdaq200night',name:'코스닥200 야간선물'}]
+];
+const dataById=new Map(),charts=new Map();
+function fmt(n,dec=2){if(n===null||n===undefined||!Number.isFinite(n))return blank;return n.toLocaleString('ko-KR',{minimumFractionDigits:0,maximumFractionDigits:dec});}
+function signed(n,dec=2){if(n===null||n===undefined||!Number.isFinite(n))return blank;return `${n>0?'+':''}${fmt(n,dec)}`;}
+function colorClass(n){return n>0?'up':n<0?'down':'neutral';}
+function closeText(item,n){if(n==null)return blank;let suffix=item.suffix||'';if(item.unit==='yield')return `${fmt(n,item.decimals??3)}%`;if(item.unit==='fx')return `${fmt(n,item.decimals??2)}원`;if(item.unit==='commodity')return `$${fmt(n,item.decimals??2)}`;if(item.unit==='stock')return `$${fmt(n,2)}`;return `${fmt(n,item.decimals??2)}${suffix}`;}
+function changeText(item,n){if(n==null)return blank;const dec=item.unit==='yield'?3:(item.unit==='fx'||item.unit==='commodity'?2:2);let suffix=item.unit==='yield'?'%p':item.unit==='fx'?'원':item.unit==='commodity'?'$':item.unit==='stock'?'$':'';return `${signed(n,dec)}${suffix}`;}
+function pctText(n){return n==null?blank:`${n>0?'+':''}${fmt(n,2)}%`;}
+function makeSummary(){const root=$('summaryRows');root.innerHTML='';summaryRows.forEach((row,ri)=>{const line=document.createElement('div');line.className='summary-row';line.style.setProperty('--cols',row.length);row.forEach(ref=>{const item=all.find(x=>x.id===ref.id);const cell=document.createElement('div');cell.className='summary-cell';cell.innerHTML=`<div class="summary-label">${ref.no}. ${ref.name}</div><div class="summary-price">${blank}</div><div class="summary-change neutral">${blank} · ${blank}</div>`;cell.dataset.summaryId=ref.id;line.appendChild(cell)});root.appendChild(line)});}
+function makeCharts(){const root=$('charts');root.innerHTML='';groups.forEach(group=>{const heading=document.createElement('div');heading.className='section-heading group-heading';heading.innerHTML=`<div><span class="eyebrow">${group.label==='미국 증시'?'U.S. MARKETS':group.label==='금리·환율·원자재'?'RATES · FX · COMMODITIES':'KOREA MARKETS'}</span><h2>${group.label}</h2></div>`;root.appendChild(heading);group.items.forEach(item=>{const card=document.createElement('article');card.className='chart-card';card.innerHTML=`<div class="chart-top"><div class="chart-title"><span class="number">${item.no}</span><h3>${item.name}</h3><div class="chart-subtitle">${item.percentChart?'최근 120봉 누적 등락률':item.unit==='yield'?'수익률(금리) 추이':'최근 120봉 일봉'}</div></div><div class="quote-block"><div class="quote-close">${blank}</div><div class="quote-change neutral">${blank} · ${blank}</div><div class="quote-date">종가 기준</div></div></div><div id="chart-${item.id}" class="chart-area"><div class="chart-empty">시세 데이터를 불러오는 중…</div></div><div class="chart-foot"><span class="chart-note">${item.ticker}</span><span class="bar-count">최대 120봉</span></div>`;root.appendChild(card);item.card=card;});});}
+function workerUrl(ticker){return `${PROXY_BASE}/?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=9mo&interval=1d&events=div%2Csplits`)}`;}
+async function fetchSeries(item){const response=await fetch(workerUrl(item.ticker),{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);const json=await response.json();const result=json?.chart?.result?.[0];if(!result)throw new Error(json?.chart?.error?.description||'시세 데이터 없음');const timestamps=result.timestamp||[],quotes=result.indicators?.quote?.[0]||{},closes=quotes.close||[];const values=[];for(let i=0;i<timestamps.length;i++){const close=closes[i];if(close!==null&&close!==undefined&&Number.isFinite(Number(close)))values.push({time:timestamps[i],value:Number(close)});}if(values.length<2)throw new Error('차트 데이터 부족');return {values:values.slice(-120),currency:result.meta?.currency||'',exchange:result.meta?.exchangeName||'',regularMarketPrice:result.meta?.regularMarketPrice};}
+function dateString(ts){return new Date(ts*1000).toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'UTC'});}
+function renderOne(item,series){dataById.set(item.id,series);const vals=series.values,last=vals[vals.length-1],prev=vals[vals.length-2],delta=last.value-prev.value,pct=prev.value?delta/prev.value*100:null;item.last=last.value;item.delta=delta;item.pct=pct;item.prev=prev.value;const card=item.card;const close=card.querySelector('.quote-close'),change=card.querySelector('.quote-change'),date=card.querySelector('.quote-date');close.textContent=closeText(item,last.value);change.textContent=`${changeText(item,delta)} · ${pctText(pct)}`;change.className=`quote-change ${colorClass(delta)}`;date.textContent=`${dateString(last.time)} 종가`;const container=$(`chart-${item.id}`);container.innerHTML='';if(!window.LightweightCharts){container.innerHTML='<div class="chart-empty">차트 라이브러리를 불러오지 못했습니다.</div>';return;}const chart=LightweightCharts.createChart(container,{width:container.clientWidth,height:container.clientHeight,layout:{background:{type:'solid',color:'#ffffff'},textColor:'#8995a6',fontFamily:'-apple-system,BlinkMacSystemFont,sans-serif',fontSize:10},grid:{vertLines:{color:'#f0f3f7'},horzLines:{color:'#f0f3f7'}},rightPriceScale:{borderColor:'#e6eaf1',scaleMargins:{top:.12,bottom:.1}},timeScale:{borderColor:'#e6eaf1',timeVisible:false,secondsVisible:false,rightOffset:1,barSpacing:7,minBarSpacing:2},crosshair:{vertLine:{color:'#a9b9cc',width:1,style:2},horzLine:{color:'#a9b9cc',width:1,style:2}},localization:{locale:'ko-KR',priceFormatter:p=>item.percentChart?`${p>0?'+':''}${p.toFixed(1)}%`:fmt(p,item.decimals??2)}});let points=vals;if(item.percentChart){const base=vals[0].value;points=vals.map(v=>({time:v.time,value:(v.value/base-1)*100}));}const seriesLine=chart.addLineSeries({color:last.value>=prev.value?'#d83b4b':'#2874d0',lineWidth:2,priceLineVisible:false,lastValueVisible:true,crosshairMarkerVisible:true,priceFormat:item.percentChart?{type:'custom',formatter:p=>`${p>0?'+':''}${p.toFixed(1)}%`,minMove:.1}:{type:'price',precision:item.decimals??2,minMove:item.unit==='yield'?.001:.01}});seriesLine.setData(points);chart.timeScale().fitContent();charts.set(item.id,{chart,container,series:seriesLine});const foot=card.querySelector('.bar-count');foot.textContent=`${vals.length}봉 · ${dateString(vals[0].time)} ~ ${dateString(last.time)}`;}
+function updateSummary(){document.querySelectorAll('[data-summary-id]').forEach(cell=>{const item=all.find(x=>x.id===cell.dataset.summaryId);const price=cell.querySelector('.summary-price'),change=cell.querySelector('.summary-change');if(item?.last==null){price.textContent=blank;change.textContent='데이터 확인 필요';change.className='summary-change neutral';return;}price.textContent=closeText(item,item.last);change.textContent=`${changeText(item,item.delta)} · ${pctText(item.pct)}`;change.className=`summary-change ${colorClass(item.delta)}`;});}
+async function refreshAll(){const button=$('refresh');button.disabled=true;$('status').textContent='시세 데이터 불러오는 중…';$('updated').textContent='업데이트 중';$('status').classList.remove('error-note');$('status').parentElement.querySelector('.live-dot').classList.remove('active');let success=0,fail=0;const queue=[...all];let cursor=0;async function worker(){while(cursor<queue.length){const item=queue[cursor++];try{const series=await fetchSeries(item);renderOne(item,series);success++;}catch(e){fail++;const c=$(`chart-${item.id}`);if(c)c.innerHTML=`<div class="chart-empty"><span>${item.name} 데이터를 불러오지 못했습니다.<br><small>${String(e.message||e).slice(0,90)}</small></span></div>`;item.card.querySelector('.quote-close').textContent=blank;item.card.querySelector('.quote-change').textContent='데이터 확인 필요';item.card.querySelector('.quote-change').className='quote-change neutral';}updateSummary();}}await Promise.all([worker(),worker(),worker(),worker()]);$('updated').textContent=`${new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 갱신`;$('status').textContent=fail?`정상 ${success}개 · 확인 필요 ${fail}개`:`${success}개 시세 연결 완료`;$('status').parentElement.querySelector('.live-dot').classList.toggle('active',success>0);if(fail)$('status').classList.add('error-note');button.disabled=false;resizeCharts();}
+function resizeCharts(){for(const {chart,container} of charts.values()){if(container.clientWidth>0)chart.applyOptions({width:container.clientWidth,height:container.clientHeight});}}
+makeSummary();makeCharts();$('refresh').addEventListener('click',refreshAll);window.addEventListener('resize',()=>{clearTimeout(window.__chartResizeTimer);window.__chartResizeTimer=setTimeout(resizeCharts,120);});refreshAll();
