@@ -78,3 +78,18 @@
 .summary-cell.night-futures-summary-cell .summary-price-line .summary-price{min-width:0}
 .summary-cell.night-futures-summary-cell .summary-price-line .summary-chart-link{position:static!important;inset:auto!important;transform:none!important;margin:0!important;flex:0 0 auto;padding:3px 7px;font-size:11px;line-height:1.1}
 @media(max-width:520px){.summary-cell.night-futures-summary-cell{padding-bottom:7px!important}.summary-cell.night-futures-summary-cell .summary-price-line .summary-chart-link{padding:3px 6px;font-size:10px}}
+
+
+/* Keep the chart link at the right of both quote lines (price + change). */
+.summary-cell.night-futures-summary-cell{padding-bottom:8px!important}
+.summary-cell.night-futures-summary-cell .summary-price-line{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}
+.summary-cell.night-futures-summary-cell .summary-quote-values{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;flex:1 1 auto}
+.summary-cell.night-futures-summary-cell .summary-quote-values .summary-price{white-space:nowrap}
+.summary-cell.night-futures-summary-cell .summary-quote-values .summary-change{white-space:nowrap;margin-top:3px}
+.summary-cell.night-futures-summary-cell .summary-price-line .summary-chart-link{position:static!important;inset:auto!important;transform:none!important;margin:0!important;flex:0 0 auto;align-self:center;padding:4px 8px;font-size:11px;line-height:1.1}
+@media(max-width:520px){
+  .summary-cell.night-futures-summary-cell{padding:7px 5px!important}
+  .summary-cell.night-futures-summary-cell .summary-price-line{gap:3px}
+  .summary-cell.night-futures-summary-cell .summary-price-line .summary-chart-link{padding:4px 6px;font-size:10px}
+  .summary-cell.night-futures-summary-cell .summary-quote-values .summary-change{font-size:10.8px}
+}
