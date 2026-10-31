@@ -210,7 +210,7 @@ function makeSummary(){
   const m7Rows=[[m7Refs[0]],[m7Refs[1],m7Refs[2]],[m7Refs[3],m7Refs[4]],[m7Refs[5],m7Refs[6]]];
   const rows=[
     {items:[{no:1,id:'nasdaq',name:'나스닥 종합'},{no:2,id:'sp500',name:'S&P 500'}],after:true},
-    ...m7Rows.map((items,index)=>({items,m7:true,after:index===3})),
+    ...m7Rows.map((items,index)=>({items,m7:true,firstM7:index===0,after:index===3})),
     {items:[{no:4,id:'sox',name:'필라델피아 반도체 지수',ticker:'^SOX'}],single:true,semis,after:true},
     {activityType:'turnover'},
     {activityType:'volume',after:true},
@@ -250,7 +250,7 @@ function makeSummary(){
     }
     if(!row.items?.length)return;
     const line=document.createElement('div');
-    line.className='summary-row'+(row.m7?' m7-summary-row':'')+(row.m7&&row.items.length===1?' m7-single-summary-row':'')+(row.single?' single-index-row':'')+(row.before?' summary-divider-before':'')+(row.after?' summary-divider-after':'');
+    line.className='summary-row'+(row.m7?' m7-summary-row':'')+(row.firstM7?' m7-first-row':'')+(row.single?' single-index-row':'')+(row.before?' summary-divider-before':'')+(row.after?' summary-divider-after':'');
     line.style.setProperty('--cols',row.items.length);
     row.items.forEach(ref=>{
       const cell=makeSummaryCell(ref);

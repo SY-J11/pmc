@@ -306,40 +306,17 @@
 }
 
 
-/* M7 요약 첫 번째 한 칸: 종목명·현재가·등락을 가운데 정렬. 세션별 시세 영역은 기존 배치 유지 */
-.summary-row.m7-single-summary-row .summary-cell .summary-titleline{
-  display:block;
-  position:relative;
-  min-width:0;
-  padding-right:42px;
+
+/* M7 첫 번째 줄만 아래 2분할 종목 카드와 같은 폭으로 중앙 배치 */
+.summary-row.m7-first-row{
+  grid-template-columns:repeat(2,minmax(0,1fr));
 }
-.summary-row.m7-single-summary-row .summary-cell .summary-titleline .summary-label{
-  display:block;
-  width:100%;
-  text-align:center;
-}
-.summary-row.m7-single-summary-row .summary-cell .summary-titleline .summary-chart-link{
-  position:absolute!important;
-  top:0;
-  right:0;
-  margin:0!important;
-}
-.summary-row.m7-single-summary-row .summary-cell .summary-quote-values{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:100%;
-  text-align:center;
-}
-.summary-row.m7-single-summary-row .summary-cell .summary-price,
-.summary-row.m7-single-summary-row .summary-cell .summary-change{
-  width:100%;
-  text-align:center;
-}
-.summary-row.m7-single-summary-row .summary-cell .summary-session-box{
-  width:100%;
-  align-self:stretch;
+.summary-row.m7-first-row > .summary-cell{
+  grid-column:1 / -1;
+  width:calc(50% - 2.5px);
+  justify-self:center;
 }
 @media(max-width:520px){
-  .summary-row.m7-single-summary-row .summary-cell .summary-titleline{padding-right:38px}
+  .summary-row.m7-first-row{gap:3px;}
+  .summary-row.m7-first-row > .summary-cell{width:calc(50% - 1.5px);}
 }
