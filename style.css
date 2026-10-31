@@ -227,3 +227,38 @@
 .chart-semiconductor-content{display:flex;flex-direction:column;gap:9px;min-width:0}
 .chart-semiconductor-toggle-row{margin:0 0 0}
 @media(min-width:760px){.semiconductor-toggle{min-height:36px;font-size:12px}}
+
+/* 반도체 구성 종목 펼침 영역을 필라델피아 반도체 지수 카드 내부에 포함 */
+.semiconductor-toggle-in-cell,
+.semiconductor-toggle-in-chart{
+  background:var(--soft);
+  border-color:#edf0f5;
+  color:#536276;
+}
+.semiconductor-toggle-in-cell{margin-top:9px;}
+.semiconductor-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:5px;
+  margin-top:7px;
+}
+.semiconductor-summary-grid .summary-cell{
+  background:var(--soft);
+  border-color:#edf0f5;
+  padding:8px 9px;
+}
+.chart-semiconductor-content{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid #e5eaf1;
+}
+.chart-semiconductor-content .chart-card{
+  background:var(--soft);
+  border-color:#e8edf3;
+  box-shadow:none;
+}
+.chart-semiconductor-content .chart-card.chart-divider-before{margin-top:0;padding-top:12px;border-top:1px solid #dce3ec;}
+@media(max-width:760px){
+  .semiconductor-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;}
+  .semiconductor-summary-grid .summary-cell{padding:7px 7px;}
+}
