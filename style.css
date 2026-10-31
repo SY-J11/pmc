@@ -217,3 +217,13 @@
 
 /* 차트 영역도 요약과 같은 M7 / SOX / SK hynix / 반도체 구간 구분 */
 .chart-card.chart-divider-before{margin-top:9px;padding-top:15px;border-top:2px solid #dce3ec}
+
+/* 반도체 상위 16개 종목: 요약과 차트 모두 접기/펼치기 */
+[hidden]{display:none!important}
+.semiconductor-toggle-row,.chart-semiconductor-toggle-row{display:flex;justify-content:center;align-items:center;margin:5px 0}
+.semiconductor-toggle{width:100%;min-height:34px;padding:7px 12px;border:1px solid #dce3ec;border-radius:8px;background:#eef1f5;color:#536276;font-size:11px;font-weight:750;letter-spacing:-.15px;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.semiconductor-toggle:active{background:#e4e9f0}
+.semiconductor-toggle:focus-visible{outline:2px solid #8aa6c8;outline-offset:2px}
+.chart-semiconductor-content{display:flex;flex-direction:column;gap:9px;min-width:0}
+.chart-semiconductor-toggle-row{margin:0 0 0}
+@media(min-width:760px){.semiconductor-toggle{min-height:36px;font-size:12px}}
